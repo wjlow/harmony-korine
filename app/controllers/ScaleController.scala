@@ -12,12 +12,16 @@ object ScaleController extends Controller {
   implicit val noteWrites = Json.writes[Note]
   implicit val scaleWrites = Json.writes[Scale]
 
-  def getScale = Action { implicit request =>
+  def getMajorScale = Action { implicit request =>
   	val root = request.queryString.get("root")
   	root match {
-  		case Some(_) => Ok(Json.toJson(Scale(List(Note(root.get.head, 3)))))
+  		case Some(_) => Ok(Json.toJson(majorScale(Note(root.get.head, 3))))
   		case _ => BadRequest("please provide root")
   	}
+  }
+
+  def majorScale(root: Note): Scale = {
+  	Scale(List(root, transpose(root, 2)))
   }
 
   def getTranspose = Action { implicit request =>
