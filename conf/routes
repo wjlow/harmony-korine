@@ -2,10 +2,7 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET     /                           			controllers.MainController.index()
-GET     /message                    			controllers.MessageController.getMessage()
-GET     /assets/javascripts/routes  			controllers.MessageController.javascriptRoutes()
-GET     /scale/:scale/:root/:octave 			controllers.ScaleController.getScale(scale: String, root: String, octave: Int)
+GET     /scale/:scale/:root/:octave 				controllers.ScaleController.getScale(scale: String, root: String, octave: Int)
 GET     /harmonise/:note/:octave/:scale/:interval	controllers.ScaleController.harmonise(note: String, octave: Int, scale: String, interval: Int)
 
 # Map static resources from the /public folder to the /assets URL path
