@@ -18,17 +18,23 @@ object ScaleController extends Controller {
   def getScale(scale: String, root: String, octave: Int) = Action {
     val rootNote = Note(root, octave)
     scales.get(scale) match {
-      case Some(_) => Ok(Json.toJson(rootNote +: generateScale(scales.get(scale).get, rootNote)))
+      case Some(_) => Ok(Json.toJson(generateScale(scales.get(scale).get, rootNote)))
       case None => BadRequest(scale + " is not a valid scale")
     }
   }
 
-  def generateScale(scale: Seq[Int], acc: Note): Seq[Note] = {
+  // def interval(note: Note, scale: Seq[Int])
+
+  def generateScale(scale: Seq[Int], root: Note): Seq[Note] = {
+    root +: generateTailOfScale(scale, root)
+  }
+
+  def generateTailOfScale(scale: Seq[Int], acc: Note): Seq[Note] = {
     (scale, acc) match {
       case (Nil, _) => Nil
       case (x :: tail, acc) => {
         val nextNote = transpose(acc, x)
-        nextNote +: generateScale(tail, nextNote)
+        nextNote +: generateTailOfScale(tail, nextNote)
       }
     }
   }
