@@ -5,30 +5,32 @@ import play.api.libs.json.Json
 import play.api.Routes
 
 case class Note(pitchClass: String, octave: Int)
-case class Scale(notes: Seq[Note])
 
 object ScaleController extends Controller {
 
   implicit val noteWrites = Json.writes[Note]
-  implicit val scaleWrites = Json.writes[Scale]
 
-  def getMajorScale = Action { implicit request =>
-  	val root = request.queryString.get("root")
-  	root match {
-  		case Some(_) => Ok(Json.toJson(majorScale(Note(root.get.head, 3))))
-  		case _ => BadRequest("please provide root")
-  	}
+  val scales = Map(
+    "major" -> List(2, 2, 1, 2, 2, 2, 1),
+    "minor" -> List(2, 1, 2, 2, 1, 2, 2)
+    )
+
+  def getScale(root: Option[String], scale: String) = Action {
+    val rootNote = Note(root.getOrElse("C"), 3)
+    scales.get(scale) match {
+      case Some(_) => Ok(Json.toJson(rootNote +: generateScale(scales.get(scale).get, rootNote)))
+      case None => BadRequest(scale + " is not a valid scale")
+    }
   }
 
-  def majorScale(root: Note): Scale = {
-  	Scale(List(root, transpose(root, 2)))
-  }
-
-  def getTranspose = Action { implicit request =>
-	val note = request.queryString.get("note")
-	val step = request.queryString.get("step")
-
-	Ok(Json.toJson(transpose(Note(note.get.head, 3), step.get.head.toInt)))
+  def generateScale(scale: Seq[Int], acc: Note): Seq[Note] = {
+    (scale, acc) match {
+      case (Nil, _) => Nil
+      case (x :: tail, acc) => {
+        val nextNote = transpose(acc, x)
+        nextNote +: generateScale(tail, nextNote)
+      }
+    }
   }
 
   def transpose(note: Note, step: Int): Note = {
@@ -53,6 +55,7 @@ object ScaleController extends Controller {
   		case "A" => 9
   		case "As" => 10
   		case "B" => 11
+      case _ => throw new RuntimeException("pitch class does not exist")
   	}
   }
 

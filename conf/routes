@@ -5,8 +5,7 @@
 GET     /                           controllers.MainController.index()
 GET     /message                    controllers.MessageController.getMessage()
 GET     /assets/javascripts/routes  controllers.MessageController.javascriptRoutes()
-GET     /scale/major                controllers.ScaleController.getMajorScale()
-GET     /transpose                  controllers.ScaleController.getTranspose()
+GET     /scale/:scale                controllers.ScaleController.getScale(root: Option[String], scale: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
