@@ -15,8 +15,8 @@ object ScaleController extends Controller {
     "minor" -> List(2, 1, 2, 2, 1, 2, 2)
     )
 
-  def getScale(scale: String, root: String) = Action {
-    val rootNote = Note(root, 3)
+  def getScale(scale: String, root: String, octave: Int) = Action {
+    val rootNote = Note(root, octave)
     scales.get(scale) match {
       case Some(_) => Ok(Json.toJson(rootNote +: generateScale(scales.get(scale).get, rootNote)))
       case None => BadRequest(scale + " is not a valid scale")
