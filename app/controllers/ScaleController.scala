@@ -23,14 +23,21 @@ object ScaleController extends Controller {
     }
   }
 
-  // def interval(note: Note, scale: Seq[Int])
-
-  def generateScale(scale: Seq[Int], root: Note): Seq[Note] = {
-    root +: generateTailOfScale(scale, root)
+  def harmonise(note: String, octave: Int, scale: String, interval: Int) = Action {
+    Ok(Json.toJson(harmony(note, octave, scale, interval)))
   }
 
-  def generateTailOfScale(scale: Seq[Int], acc: Note): Seq[Note] = {
-    (scale, acc) match {
+  def harmony(note: String, octave: Int, scale: String, degree: Int): Note = {
+    val notesInScale: Seq[Note] = generateScale(scales.get(scale).get, Note(note, octave))
+    notesInScale(degree - 1)
+  }
+
+  def generateScale(scaleSteps: Seq[Int], root: Note): Seq[Note] = {
+    root +: generateTailOfScale(scaleSteps, root)
+  }
+
+  def generateTailOfScale(scaleSteps: Seq[Int], acc: Note): Seq[Note] = {
+    (scaleSteps, acc) match {
       case (Nil, _) => Nil
       case (x :: tail, acc) => {
         val nextNote = transpose(acc, x)
