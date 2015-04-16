@@ -33,17 +33,7 @@ object ScaleController extends Controller {
   }
 
   def generateScale(scaleSteps: Seq[Int], root: Note): Seq[Note] = {
-    root +: generateTailOfScale(scaleSteps, root)
-  }
-
-  def generateTailOfScale(scaleSteps: Seq[Int], acc: Note): Seq[Note] = {
-    (scaleSteps, acc) match {
-      case (Nil, _) => Nil
-      case (x :: tail, acc) => {
-        val nextNote = transpose(acc, x)
-        nextNote +: generateTailOfScale(tail, nextNote)
-      }
-    }
+    scaleSteps.scanLeft(absPitch(root))(_+_).map(abs => pitch(abs))
   }
 
   def transpose(note: Note, step: Int): Note = {
